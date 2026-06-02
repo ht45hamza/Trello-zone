@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-brand-50: #f0f7ff;
+  --color-brand-100: #e0effe;
+  --color-brand-200: #badffd;
+  --color-brand-300: #7cc2fc;
+  --color-brand-400: #36a3f9;
+  --color-brand-500: #0c87eb;
+  --color-brand-600: #0069c7;
+  --color-brand-700: #0054a1;
+  --color-brand-800: #004785;
+  --color-brand-900: #063c6d;
+  --color-brand-950: #04264a;
+
+  /* Trello Board Colors */
+  --color-trello-blue: #0079bf;
+  --color-trello-green: #51a825;
+  --color-trello-orange: #ff9f1a;
+  --color-trello-red: #eb5a46;
+  --color-trello-yellow: #f2d600;
+  --color-trello-purple: #c377e0;
+  --color-trello-pink: #ff78cb;
+  --color-trello-sky: #00c2e0;
+  --color-trello-lime: #4bbf6b;
+
+  /* Surface Colors */
+  --color-surface: #f1f2f4;
+  --color-surface-hover: #e2e4e9;
+  --color-surface-dark: #172b4d;
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    background-color: #f4f5f7;
+    color: #172b4d;
+  }
+
+  body {
+    margin: 0;
+    display: block;
+    min-height: 100vh;
+  }
+
+  #root {
+    width: 100%;
+  }
+
+  /* Thin modern scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Scrollbar for dark/colored background */
+  .dark-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  .dark-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.45);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-gray-300 {
+    scrollbar-color: #d1d5db transparent;
+  }
+
+  .scrollbar-thumb-white\/30 {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  /* Glassmorphism Styles */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+  }
+
+  .glass-input {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 4px rgba(12, 135, 235, 0.15);
+    outline: none;
+  }
+
+  /* Custom Animated Mesh Gradient */
+  @keyframes gradientBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-mesh {
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #0f172a);
+    background-size: 400% 400%;
+    animation: gradientBg 15s ease infinite;
+  }
+
+  .animate-mesh-light {
+    background: linear-gradient(-45deg, #f0f7ff, #e0effe, #fae8ff, #f0f7ff);
+    background-size: 400% 400%;
+    animation: gradientBg 15s ease infinite;
+  }
+}
