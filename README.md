@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 Trello-Zone
 
 A modern, full-featured **Trello Clone** web application built with a high-performance stack. This application replicates core Trello features such as workspaces, boards, dynamic drag-and-drop lists, card management, due dates, file attachments, member assignment, label tagging, checklists, and comprehensive user account management.
@@ -218,3 +219,7 @@ All backend endpoints are prefixed with `/api`.
 - `npm run build`: Bundles the application with Rollup/Vite for production release.
 - `npm run lint`: Validates source code syntax issues using ESLint.
 - `npm run preview`: Serves production-built bundle locally for testing.
+=======
+# Trello-zone
+A modern, full-featured Trello Clone web application built with a high-performance stack. This application replicates core Trello features such as workspaces, boards, dynamic drag-and-drop lists, card management, due dates, file attachments, member assignment, label tagging, checklists, and comprehensive user account management.
+>>>>>>> c7a632caefb517db9d6b6dd80efd63e50dc3dfdf
