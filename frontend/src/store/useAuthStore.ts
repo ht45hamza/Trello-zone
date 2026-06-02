@@ -26,7 +26,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
     setAuth: (user, accessToken, refreshToken) => {
         localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('token', accessToken); // backward compat
+        localStorage.setItem('token', accessToken);
         if (refreshToken) {
             localStorage.setItem('refreshToken', refreshToken);
         }

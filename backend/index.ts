@@ -169,3 +169,5 @@ app.listen(PORT, () => {
     console.log(`  URL:         \x1b[34mhttp://localhost:${PORT}\x1b[0m`);
     console.log(`\x1b[36m==========================================\x1b[0m\n`);
 });
+
+export default app

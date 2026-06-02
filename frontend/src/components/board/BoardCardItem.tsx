@@ -26,8 +26,14 @@ const BoardCardItem: React.FC<BoardCardItemProps> = ({
                     ref={provided.innerRef} 
                     {...provided.draggableProps} 
                     {...provided.dragHandleProps} 
+                    style={{
+                        ...provided.draggableProps.style,
+                        transform: snapshot.isDragging 
+                            ? `${provided.draggableProps.style?.transform} scale(1.02)` 
+                            : provided.draggableProps.style?.transform
+                    }}
                     onClick={onClick}
-                    className={`bg-white rounded-xl shadow-sm p-4 hover:shadow-md group/card border border-slate-200/50 hover:border-brand-300 cursor-pointer ${snapshot.isDragging ? 'shadow-2xl border-brand-500 scale-[1.02] bg-white ring-2 ring-brand-500/15' : 'transition-all duration-200'}`}
+                    className={`bg-white rounded-xl shadow-sm p-4 hover:shadow-md group/card border border-slate-200/50 hover:border-brand-300 cursor-pointer ${snapshot.isDragging ? 'shadow-2xl border-brand-500 bg-white ring-2 ring-brand-500/15' : 'transition-[box-shadow,border-color,background-color] duration-200'}`}
                 >
                     {/* Labels */}
                     {card.labels?.length > 0 && (

@@ -46,10 +46,16 @@ const BoardListColumn: React.FC<BoardListColumnProps> = ({
                 <div 
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className={`w-76 shrink-0 h-full flex flex-col ${snapshot.isDragging ? 'opacity-90 scale-[1.01]' : ''}`}
+                    style={{
+                        ...provided.draggableProps.style,
+                        transform: snapshot.isDragging 
+                            ? `${provided.draggableProps.style?.transform} scale(1.01)` 
+                            : provided.draggableProps.style?.transform
+                    }}
+                    className={`w-76 shrink-0 h-full flex flex-col ${snapshot.isDragging ? 'opacity-90' : ''}`}
                 >
                     {/* Frosted List Wrapper */}
-                    <div className="bg-white/75 backdrop-blur-lg border border-white/45 rounded-2xl flex flex-col max-h-[calc(100vh-140px)] shadow-lg shadow-black/5 text-slate-800">
+                    <div className="bg-slate-100 border border-slate-200/80 rounded-2xl flex flex-col max-h-[calc(100vh-140px)] shadow-lg shadow-black/5 text-slate-800">
                         
                         {/* List Header */}
                         <div 
