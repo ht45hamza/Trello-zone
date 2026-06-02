@@ -17,6 +17,7 @@ import {
     FolderKanban,
     Sparkles
 } from 'lucide-react';
+import { boardBackgroundPresets, pageBackgrounds } from '../../colors';
 
 const Dashboard: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -27,7 +28,7 @@ const Dashboard: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [newBoardTitle, setNewBoardTitle] = useState('');
-    const [newBoardColor, setNewBoardColor] = useState('linear-gradient(135deg, #0c87eb 0%, #00f2fe 100%)');
+    const [newBoardColor, setNewBoardColor] = useState(boardBackgroundPresets[0].value);
     const [isCreating, setIsCreating] = useState(false);
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
     const [greeting, setGreeting] = useState('');
@@ -143,20 +144,10 @@ const Dashboard: React.FC = () => {
         });
 
     // Premium Color and Gradient presets
-    const presets = [
-        { value: 'linear-gradient(135deg, #0c87eb 0%, #00f2fe 100%)', label: 'Ocean Blue' },
-        { value: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', label: 'Mint Glow' },
-        { value: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', label: 'Warm Flame' },
-        { value: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', label: 'Sunset Glow' },
-        { value: 'linear-gradient(135deg, #89609e 0%, #e879f9 100%)', label: 'Purple Haze' },
-        { value: 'linear-gradient(135deg, #f857a6 0%, #ff5858 100%)', label: 'Strawberry' },
-        { value: '#0079bf', label: 'Trello Blue' },
-        { value: '#519839', label: 'Forest Green' },
-        { value: '#b04632', label: 'Burgundy' },
-    ];
+    const presets = boardBackgroundPresets;
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] flex font-sans">
+        <div className="min-h-screen flex font-sans" style={{ backgroundColor: pageBackgrounds.dashboardLight }}>
             {/* Sidebar */}
             <Sidebar 
                 activeTab={activeTab} 

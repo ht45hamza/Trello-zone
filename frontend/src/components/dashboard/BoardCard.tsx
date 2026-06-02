@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Trash2, ChevronRight } from 'lucide-react';
+import { brandColors } from '../../colors';
 
 interface BoardCardProps {
     board: any;
@@ -22,7 +23,7 @@ const BoardCard: React.FC<BoardCardProps> = ({
         <div 
             onClick={onClick}
             className="group relative h-44 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border border-slate-200/40"
-            style={{ background: board.background_color || '#0c87eb' }}
+            style={{ background: board.background_color || brandColors[500] }}
         >
             {board.background_image && (
                 <img 

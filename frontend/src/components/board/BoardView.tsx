@@ -14,6 +14,7 @@ import BoardListColumn from './BoardListColumn';
 import CardDetailsModal from './CardDetailsModal';
 import BoardMenuModal from './BoardMenuModal';
 import BoardMembersModal from './BoardMembersModal';
+import { labelColorPalette, pageBackgrounds, trelloColors } from '../../colors';
 
 const BoardView: React.FC = () => {
     const { id } = useParams();
@@ -39,7 +40,7 @@ const BoardView: React.FC = () => {
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [descriptionText, setDescriptionText] = useState('');
     const [newLabelText, setNewLabelText] = useState('');
-    const [newLabelColor, setNewLabelColor] = useState('#3b82f6');
+    const [newLabelColor, setNewLabelColor] = useState(labelColorPalette[4]);
 
     const [newActivityTitle, setNewActivityTitle] = useState('');
     const [newActivityPicture, setNewActivityPicture] = useState<File | null>(null);
@@ -326,7 +327,7 @@ const BoardView: React.FC = () => {
     };
 
     if (error) return (
-        <div className="h-screen w-full flex flex-col items-center justify-center bg-[#0b0f19] px-6 text-center font-sans">
+        <div className="h-screen w-full flex flex-col items-center justify-center px-6 text-center font-sans" style={{ backgroundColor: pageBackgrounds.authDark }}>
             <div className="inline-flex items-center justify-center w-20 h-20 bg-red-950/40 border border-red-500/20 text-red-500 rounded-full mb-6 text-3xl animate-bounce">
                 <span>⚠️</span>
             </div>
@@ -350,7 +351,7 @@ const BoardView: React.FC = () => {
     );
 
     if (loading) return (
-        <div className="h-screen w-full flex flex-col items-center justify-center bg-[#0b0f19]">
+        <div className="h-screen w-full flex flex-col items-center justify-center" style={{ backgroundColor: pageBackgrounds.authDark }}>
             <Loader2 className="animate-spin text-brand-500 mb-4" size={48} />
             <p className="text-slate-400 font-semibold animate-pulse text-sm">Synchronizing workspace cards...</p>
         </div>
@@ -359,7 +360,7 @@ const BoardView: React.FC = () => {
     return (
         <div 
             className="h-screen w-full flex flex-col overflow-hidden transition-all duration-500 font-sans"
-            style={{ background: board?.background_color || '#0079bf' }}
+            style={{ background: board?.background_color || trelloColors.blue }}
         >
             {/* Share Success Toast */}
             {showShareSuccess && (

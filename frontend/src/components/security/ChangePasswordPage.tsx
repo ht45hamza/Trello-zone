@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import { Lock, KeyRound, ArrowLeft, Loader2, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { pageBackgrounds } from '../../colors';
 
 const ChangePasswordPage: React.FC = () => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -51,7 +52,7 @@ const ChangePasswordPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans" style={{ backgroundColor: pageBackgrounds.authDark }}>
             {/* Animated Glow Elements */}
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-500/10 rounded-full blur-[120px] animate-pulse duration-[8000ms]" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[120px] animate-pulse duration-[6000ms]" />

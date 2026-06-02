@@ -1,8 +1,8 @@
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/user-model";
-import { ApiError } from "../utils/api-error";
-import { AuthRequest } from "../controllers/auth-controller";
+import User from "../models/UserModel";
+import { ApiError } from "../utils/ApiError";
+import { AuthRequest } from "../controllers/AuthController";
 
 const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
     let token: string | undefined;

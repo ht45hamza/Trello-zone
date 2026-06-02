@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { createCard, getCardsByList, getCardById, updateCard, deleteCard, moveCard, getCardsByBoard, addActivity, updateActivity, deleteActivity, reorderCards } from "../controllers/card-controller";
-import { protect } from "../middleware/auth-middleware";
+import { createCard, getCardsByList, getCardById, updateCard, deleteCard, moveCard, getCardsByBoard, addActivity, updateActivity, deleteActivity, reorderCards } from "../controllers/CardController";
+import { protect } from "../middleware/AuthMiddleware";
 
-import { upload } from "../middleware/multer-middleware";
+import { upload } from "../middleware/MulterMiddleware";
 
 const router = Router();
 

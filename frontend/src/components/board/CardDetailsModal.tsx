@@ -13,6 +13,7 @@ import {
     X,
     Users
 } from 'lucide-react';
+import { labelColorPalette } from '../../colors';
 
 interface CardDetailsModalProps {
     isOpen: boolean;
@@ -413,7 +414,7 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                             />
                             
                             <div className="grid grid-cols-5 gap-1.5">
-                                {['#ef4444', '#f97316', '#eab308', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#64748b', '#000000'].map(color => (
+                                {labelColorPalette.map(color => (
                                     <button
                                         key={color}
                                         type="button"

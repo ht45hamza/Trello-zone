@@ -1,12 +1,12 @@
 import { Response } from 'express';
-import { AuthRequest } from './auth-controller';
-import Board from '../models/board-model';
-import List from '../models/list-model';
-import Card from '../models/card-model';
-import User from '../models/user-model';
-import { asyncHandler } from '../utils/async-handler';
-import { ApiError } from '../utils/api-error';
-import { ApiResponse } from '../utils/api-response';
+import { AuthRequest } from './AuthController';
+import Board from '../models/BoardModel';
+import List from '../models/ListModel';
+import Card from '../models/CardModel';
+import User from '../models/UserModel';
+import { asyncHandler } from '../utils/AsyncHandler';
+import { ApiError } from '../utils/ApiError';
+import { ApiResponse } from '../utils/ApiResponse';
 
 //   Create a new board
 export const createBoard = asyncHandler(async (req: AuthRequest, res: Response) => {

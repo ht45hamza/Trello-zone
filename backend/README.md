@@ -61,15 +61,15 @@ npm run start
 
 ## 📂 Key Architecture Modules
 
-- **`server.ts`**: The main entry point initializing middleware (CORS, Express JSON parsing, request logger), routes mapping, and global error handling middleware.
+- **`index.ts`**: The main entry point initializing middleware (CORS, Express JSON parsing, request logger), routes mapping, and global error handling middleware.
 - **`models/`**: Defines database schemas.
-  - [user-model.ts](file:///d:/DEVSOUL/Trello/backend/models/user-model.ts): Custom User database schema with encryption and OTP fields.
-  - [board-model.ts](file:///d:/DEVSOUL/Trello/backend/models/board-model.ts): Boards table mapping owners, members, and custom styling presets.
-  - [list-model.ts](file:///d:/DEVSOUL/Trello/backend/models/list-model.ts): Board columns tracking position index.
-  - [card-model.ts](file:///d:/DEVSOUL/Trello/backend/models/card-model.ts): Cards detail storing label arrays, assignees, checklists, and attachments.
+  - [UserModel.ts](file:///d:/DEVSOUL/Trello/backend/models/UserModel.ts): Custom User database schema with encryption and OTP fields.
+  - [BoardModel.ts](file:///d:/DEVSOUL/Trello/backend/models/BoardModel.ts): Boards table mapping owners, members, and custom styling presets.
+  - [ListModel.ts](file:///d:/DEVSOUL/Trello/backend/models/ListModel.ts): Board columns tracking position index.
+  - [CardModel.ts](file:///d:/DEVSOUL/Trello/backend/models/CardModel.ts): Cards detail storing label arrays, assignees, checklists, and attachments.
 - **`controllers/`**: Contains core request-response controllers handling database queries and business logic.
 - **`routes/`**: Handles REST router endpoints routing logic to controllers.
 - **`middleware/`**:
-  - `auth-middleware.ts`: Authenticates request headers and guards endpoints.
-  - `multer-middleware.ts`: Configures local temp storage files for uploads.
-  - `validators.ts`: Express-validator schemas verifying fields for all forms.
+  - `AuthMiddleware.ts`: Authenticates request headers and guards endpoints.
+  - `MulterMiddleware.ts`: Configures local temp storage files for uploads.
+  - `Validators.ts`: Express-validator schemas verifying fields for all forms.

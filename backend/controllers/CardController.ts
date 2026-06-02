@@ -1,12 +1,12 @@
 import { Response } from 'express';
-import { AuthRequest } from './auth-controller';
-import Card from '../models/card-model';
-import Board from '../models/board-model';
-import List from '../models/list-model';
-import { asyncHandler } from '../utils/async-handler';
-import { ApiError } from '../utils/api-error';
-import { ApiResponse } from '../utils/api-response';
-import { uploadOnCloudinary } from '../utils/cloudinary';
+import { AuthRequest } from './AuthController';
+import Card from '../models/CardModel';
+import Board from '../models/BoardModel';
+import List from '../models/ListModel';
+import { asyncHandler } from '../utils/AsyncHandler';
+import { ApiError } from '../utils/ApiError';
+import { ApiResponse } from '../utils/ApiResponse';
+import { uploadOnCloudinary } from '../utils/Cloudinary';
 
 // Helper: verify user has access to the board
 const verifyBoardAccess = async (boardId: string, userId: string) => {

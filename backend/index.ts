@@ -4,13 +4,13 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import path from 'path';
 import connectDB from './config/db';
-import { ApiError } from './utils/api-error';
+import { ApiError } from './utils/ApiError';
 
 // Import Routes
-import authRoutes from './routes/auth-routes';
-import boardRoutes from './routes/board-routes';
-import listRoutes from './routes/list-routes';
-import cardRoutes from './routes/card-routes';
+import authRoutes from './routes/AuthRoutes';
+import boardRoutes from './routes/BoardRoutes';
+import listRoutes from './routes/ListRoutes';
+import cardRoutes from './routes/CardRoutes';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger';
 

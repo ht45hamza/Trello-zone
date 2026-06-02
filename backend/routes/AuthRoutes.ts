@@ -11,8 +11,8 @@ import {
     changePassword,
     updateAvatar,
     searchUsers
-} from "../controllers/auth-controller";
-import { protect } from "../middleware/auth-middleware";
+} from "../controllers/AuthController";
+import { protect } from "../middleware/AuthMiddleware";
 import {
     registerValidation,
     loginValidation,
@@ -20,9 +20,9 @@ import {
     verifyOTPValidation,
     resetPasswordValidation,
     changePasswordValidation
-} from "../middleware/validators";
-import { validate } from "../middleware/validate-middleware";
-import { upload } from "../middleware/multer-middleware";
+} from "../middleware/Validators";
+import { validate } from "../middleware/ValidateMiddleware";
+import { upload } from "../middleware/MulterMiddleware";
 
 const router = Router();
 

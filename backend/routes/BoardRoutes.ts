@@ -8,8 +8,8 @@ import {
     toggleStarBoard,
     addBoardMember,
     removeBoardMember
-} from "../controllers/board-controller";
-import { protect } from "../middleware/auth-middleware";
+} from "../controllers/BoardController";
+import { protect } from "../middleware/AuthMiddleware";
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createList, getListsByBoard, updateList, deleteList, reorderLists } from "../controllers/list-controller";
-import { protect } from "../middleware/auth-middleware";
+import { createList, getListsByBoard, updateList, deleteList, reorderLists } from "../controllers/ListController";
+import { protect } from "../middleware/AuthMiddleware";
 
 const router = Router();
 

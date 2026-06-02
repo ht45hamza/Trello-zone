@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import User from '../models/user-model';
+import User from '../models/UserModel';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { asyncHandler } from '../utils/async-handler';
-import { ApiError } from '../utils/api-error';
-import { ApiResponse } from '../utils/api-response';
-import { uploadOnCloudinary } from '../utils/cloudinary';
+import { asyncHandler } from '../utils/AsyncHandler';
+import { ApiError } from '../utils/ApiError';
+import { ApiResponse } from '../utils/ApiResponse';
+import { uploadOnCloudinary } from '../utils/Cloudinary';
 
 export interface AuthRequest extends Request {
     user?: any;

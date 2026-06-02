@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutGrid, Layout, Star, Clock, KeyRound, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { pageBackgrounds } from '../../colors';
 
 interface SidebarProps {
     activeTab: 'boards' | 'starred' | 'recent';
@@ -17,7 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, user, onLogo
         : 'HT';
 
     return (
-        <aside className="w-68 border-r border-slate-200/80 hidden lg:flex flex-col p-5 bg-[#0f172a] text-slate-300 justify-between">
+        <aside className="w-68 border-r border-slate-200/80 hidden lg:flex flex-col p-5 text-slate-300 justify-between" style={{ backgroundColor: pageBackgrounds.sidebarDark }}>
             <div>
                 <div className="flex items-center gap-3 px-2 mb-10 cursor-pointer" onClick={() => navigate('/')}>
                     <div className="bg-gradient-to-tr from-brand-500 to-sky-400 p-2 rounded-xl text-white shadow-lg shadow-brand-500/10">
