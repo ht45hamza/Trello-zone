@@ -20,8 +20,35 @@ const app = express();
 connectDB();
 
 // Middleware
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:3000',
+    'https://trello-zone-pfbw.vercel.app'
+];
+
+if (process.env.ALLOWED_ORIGINS) {
+    const customOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+    allowedOrigins.push(...customOrigins);
+}
+
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:3000'],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, postman)
+        if (!origin) return callback(null, true);
+        
+        // Allow if it matches allowed list or starts with 'https://trello-zone' and ends with '.vercel.app'
+        const isAllowed = allowedOrigins.includes(origin) || 
+                          /^https:\/\/trello-zone[-a-zA-Z0-9]*\.vercel\.app$/.test(origin);
+        
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            console.warn(`[CORS Blocked] Origin not allowed: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(express.json({ limit: '16kb' }));
@@ -160,14 +187,16 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`\n\x1b[36m==========================================\x1b[0m`);
-    console.log(`\x1b[32m  Trello-Zone API Server\x1b[0m`);
-    console.log(`\x1b[36m==========================================\x1b[0m`);
-    console.log(`  Port:        \x1b[33m${PORT}\x1b[0m`);
-    console.log(`  Environment: \x1b[33m${process.env.NODE_ENV || 'development'}\x1b[0m`);
-    console.log(`  URL:         \x1b[34mhttp://localhost:${PORT}\x1b[0m`);
-    console.log(`\x1b[36m==========================================\x1b[0m\n`);
-});
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`\n\x1b[36m==========================================\x1b[0m`);
+        console.log(`\x1b[32m  Trello-Zone API Server\x1b[0m`);
+        console.log(`\x1b[36m==========================================\x1b[0m`);
+        console.log(`  Port:        \x1b[33m${PORT}\x1b[0m`);
+        console.log(`  Environment: \x1b[33m${process.env.NODE_ENV || 'development'}\x1b[0m`);
+        console.log(`  URL:         \x1b[34mhttp://localhost:${PORT}\x1b[0m`);
+        console.log(`\x1b[36m==========================================\x1b[0m\n`);
+    });
+}
 
 export default app

@@ -10,7 +10,7 @@ const getBaseURL = () => {
 };
 
 const api = axios.create({
-    baseURL: getBaseURL(),
+    baseURL: `${import.meta.env.VITE_API_URL}/api`,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -107,7 +107,10 @@ api.interceptors.response.use(
 
             try {
                 // Call refresh token endpoint directly with axios (not the api instance)
-                const response = await axios.post('/api/auth/refresh-token', { refreshToken });
+                const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,
+                { refreshToken }
+                );
                 const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data.data;
 
                 localStorage.setItem('accessToken', newAccessToken);
