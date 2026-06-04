@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import { useChangePasswordMutation } from '../../api/api';
 import { Lock, KeyRound, ArrowLeft, Loader2, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { pageBackgrounds } from '../../colors';
 
@@ -8,7 +8,6 @@ const ChangePasswordPage: React.FC = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [showCurrent, setShowCurrent] = useState(false);
@@ -16,6 +15,7 @@ const ChangePasswordPage: React.FC = () => {
     const [showConfirm, setShowConfirm] = useState(false);
 
     const navigate = useNavigate();
+    const [changePassword, { isLoading }] = useChangePasswordMutation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,18 +36,14 @@ const ChangePasswordPage: React.FC = () => {
             return;
         }
 
-        setIsLoading(true);
-
         try {
-            await api.post('/auth/change-password', { currentPassword, newPassword });
+            await changePassword({ currentPassword, newPassword }).unwrap();
             setSuccess(true);
             setTimeout(() => {
                 navigate('/');
             }, 2000);
         } catch (err: any) {
-            setError(err.message || 'Failed to change password');
-        } finally {
-            setIsLoading(false);
+            setError(err.data?.message || err.message || 'Failed to change password');
         }
     };
 

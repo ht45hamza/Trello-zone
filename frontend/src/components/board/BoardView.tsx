@@ -1,7 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import api from '../../api/axios';
+import { 
+    useGetBoardByIdQuery,
+    useGetListsByBoardQuery,
+    useGetCardsByBoardQuery,
+    useCreateListMutation,
+    useUpdateListMutation,
+    useDeleteListMutation,
+    useReorderListsMutation,
+    useCreateCardMutation,
+    useUpdateCardMutation,
+    useDeleteCardMutation,
+    useReorderCardsMutation,
+    useAddCardActivityMutation,
+    useUpdateCardActivityMutation,
+    useDeleteCardActivityMutation,
+    useDeleteBoardMutation,
+    useUpdateBoardMutation,
+    useToggleStarBoardMutation
+} from '../../api/api';
 import useAuthStore from '../../store/useAuthStore';
 import { 
     Plus, 
@@ -22,7 +40,6 @@ const BoardView: React.FC = () => {
     const [board, setBoard] = useState<any>(null);
     const [lists, setLists] = useState<any[]>([]);
     const [cards, setCards] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     // Form states
@@ -55,41 +72,70 @@ const BoardView: React.FC = () => {
 
     const { user } = useAuthStore();
 
-    const fetchBoardData = async () => {
-        setError(null);
-        try {
-            const boardRes: any = await api.get(`/boards/${id}`);
-            const listsRes: any = await api.get(`/lists/board/${id}`);
-            const cardsRes: any = await api.get(`/cards/board/all?board_id=${id}`);
-            
+    // RTK Query hooks
+    const { data: boardRes, error: boardQueryError, isLoading: boardQueryLoading, refetch: refetchBoard } = useGetBoardByIdQuery(id, { skip: !id });
+    const { data: listsRes, isLoading: listsQueryLoading, refetch: refetchLists } = useGetListsByBoardQuery(id, { skip: !id });
+    const { data: cardsRes, isLoading: cardsQueryLoading, refetch: refetchCards } = useGetCardsByBoardQuery(id, { skip: !id });
+    
+    const [createList] = useCreateListMutation();
+    const [updateList] = useUpdateListMutation();
+    const [deleteList] = useDeleteListMutation();
+    const [reorderLists] = useReorderListsMutation();
+    
+    const [createCard] = useCreateCardMutation();
+    const [updateCard] = useUpdateCardMutation();
+    const [deleteCard] = useDeleteCardMutation();
+    const [reorderCards] = useReorderCardsMutation();
+    
+    const [addCardActivity] = useAddCardActivityMutation();
+    const [updateCardActivity] = useUpdateCardActivityMutation();
+    const [deleteCardActivity] = useDeleteCardActivityMutation();
+    
+    const [deleteBoard] = useDeleteBoardMutation();
+    const [updateBoard] = useUpdateBoardMutation();
+    const [toggleStarBoard] = useToggleStarBoardMutation();
+
+    const loading = boardQueryLoading || listsQueryLoading || cardsQueryLoading;
+
+    // Sync RTK Query data to local state for smooth optimistic UI updates on drag-and-drop
+    useEffect(() => {
+        if (boardRes?.data) {
             setBoard(boardRes.data);
-            setLists(listsRes.data || []);
-            setCards(cardsRes.data || []);
-        } catch (err: any) {
-            console.error('Failed to fetch board data:', err);
-            setError(err.message || 'Failed to load board data. Please try again.');
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [boardRes]);
 
     useEffect(() => {
-        if (id) fetchBoardData();
-    }, [id]);
+        if (listsRes?.data) {
+            setLists(listsRes.data);
+        }
+    }, [listsRes]);
+
+    useEffect(() => {
+        if (cardsRes?.data) {
+            setCards(cardsRes.data);
+        }
+    }, [cardsRes]);
+
+    useEffect(() => {
+        if (boardQueryError) {
+            setError((boardQueryError as any)?.data?.message || (boardQueryError as any)?.message || 'Failed to load board data. Please try again.');
+        } else {
+            setError(null);
+        }
+    }, [boardQueryError]);
 
     const handleCreateList = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (!newListTitle.trim()) return;
 
         try {
-            await api.post('/lists', {
+            await createList({
                 title: newListTitle,
                 board_id: id,
                 position: lists.length
-            });
+            }).unwrap();
             setNewListTitle('');
             setIsAddingList(false);
-            fetchBoardData();
         } catch (err) {
             console.error(err);
         }
@@ -100,10 +146,9 @@ const BoardView: React.FC = () => {
         try {
             const listCards = cards.filter(c => c.list_id === listId);
             for (const card of listCards) {
-                await api.delete(`/cards/${card._id}`);
+                await deleteCard(card._id).unwrap();
             }
-            await api.delete(`/lists/${listId}`);
-            fetchBoardData();
+            await deleteList(listId).unwrap();
         } catch (err) {
             console.error(err);
         }
@@ -115,9 +160,8 @@ const BoardView: React.FC = () => {
             return;
         }
         try {
-            await api.put(`/lists/${listId}`, { title: editingListTitle });
+            await updateList({ id: listId, title: editingListTitle }).unwrap();
             setEditingListId(null);
-            fetchBoardData();
         } catch (err) {
             console.error(err);
         }
@@ -127,15 +171,14 @@ const BoardView: React.FC = () => {
         if (!newCardTitle.trim()) return;
 
         try {
-            await api.post('/cards', {
+            await createCard({
                 title: newCardTitle,
                 list_id: listId,
                 board_id: id,
                 position: cards.filter(c => c.list_id === listId).length
-            });
+            }).unwrap();
             setNewCardTitle('');
             setAddingCardToListId(null);
-            fetchBoardData();
         } catch (err) {
             console.error(err);
         }
@@ -143,8 +186,7 @@ const BoardView: React.FC = () => {
 
     const handleDeleteCard = async (cardId: string) => {
         try {
-            await api.delete(`/cards/${cardId}`);
-            setCards(prev => prev.filter(c => c._id !== cardId));
+            await deleteCard(cardId).unwrap();
             if (selectedCard?._id === cardId) setSelectedCard(null);
         } catch (err) {
             console.error(err);
@@ -154,8 +196,7 @@ const BoardView: React.FC = () => {
     const handleUpdateCardDetails = async (updates: any) => {
         if (!selectedCard) return;
         try {
-            const res: any = await api.put(`/cards/${selectedCard._id}`, updates);
-            setCards(prev => prev.map(c => c._id === selectedCard._id ? res.data : c));
+            const res: any = await updateCard({ id: selectedCard._id, ...updates }).unwrap();
             setSelectedCard(res.data);
         } catch (err) {
             console.error('Failed to update card details:', err);
@@ -174,11 +215,8 @@ const BoardView: React.FC = () => {
                 formData.append('picture', newActivityPicture);
             }
 
-            const res: any = await api.post(`/cards/${selectedCard._id}/activities`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const res: any = await addCardActivity({ id: selectedCard._id, formData }).unwrap();
             
-            setCards(prev => prev.map(c => c._id === selectedCard._id ? res.data : c));
             setSelectedCard(res.data);
             setNewActivityTitle('');
             setNewActivityPicture(null);
@@ -192,9 +230,12 @@ const BoardView: React.FC = () => {
     const handleToggleActivity = async (activityId: string, is_completed: boolean) => {
         if (!selectedCard) return;
         try {
-            const res: any = await api.put(`/cards/${selectedCard._id}/activities/${activityId}`, { is_completed: !is_completed });
+            const res: any = await updateCardActivity({
+                cardId: selectedCard._id,
+                activityId,
+                is_completed: !is_completed
+            }).unwrap();
             
-            setCards(prev => prev.map(c => c._id === selectedCard._id ? res.data : c));
             setSelectedCard(res.data);
         } catch (err) {
             console.error(err);
@@ -204,9 +245,11 @@ const BoardView: React.FC = () => {
     const handleDeleteActivity = async (activityId: string) => {
         if (!selectedCard) return;
         try {
-            const res: any = await api.delete(`/cards/${selectedCard._id}/activities/${activityId}`);
+            const res: any = await deleteCardActivity({
+                cardId: selectedCard._id,
+                activityId
+            }).unwrap();
             
-            setCards(prev => prev.map(c => c._id === selectedCard._id ? res.data : c));
             setSelectedCard(res.data);
         } catch (err) {
             console.error(err);
@@ -227,9 +270,9 @@ const BoardView: React.FC = () => {
             setLists(updatedLists);
 
             try {
-                await api.post('/lists/reorder', { 
+                await reorderLists({ 
                     items: updatedLists.map(list => ({ _id: list._id, position: list.position })) 
-                });
+                }).unwrap();
             } catch (err) {
                 console.error(err);
             }
@@ -267,7 +310,7 @@ const BoardView: React.FC = () => {
         setCards(newCards);
 
         try {
-            await api.post('/cards/reorder', { items: itemsToUpdate });
+            await reorderCards({ items: itemsToUpdate }).unwrap();
         } catch (err) {
             console.error(err);
         }
@@ -282,7 +325,7 @@ const BoardView: React.FC = () => {
     const handleDeleteBoard = async () => {
         if (!window.confirm('Are you sure you want to delete this entire board?')) return;
         try {
-            await api.delete(`/boards/${id}`);
+            await deleteBoard(id).unwrap();
             navigate('/');
         } catch (err) {
             console.error(err);
@@ -295,8 +338,7 @@ const BoardView: React.FC = () => {
             return;
         }
         try {
-            await api.put(`/boards/${id}`, { title: newBoardTitle });
-            setBoard({ ...board, title: newBoardTitle });
+            await updateBoard({ id, title: newBoardTitle }).unwrap();
             setIsEditingBoardTitle(false);
         } catch (err) {
             console.error(err);
@@ -308,8 +350,7 @@ const BoardView: React.FC = () => {
     const handleToggleBoardStar = async () => {
         if (!board) return;
         try {
-            await api.put(`/boards/${board._id}/star`);
-            fetchBoardData();
+            await toggleStarBoard(board._id).unwrap();
         } catch (err) {
             console.error(err);
         }
@@ -341,7 +382,7 @@ const BoardView: React.FC = () => {
                     Back to Dashboard
                 </button>
                 <button 
-                    onClick={() => { setLoading(true); fetchBoardData(); }}
+                    onClick={() => { refetchBoard(); refetchLists(); refetchCards(); }}
                     className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-2xl text-sm font-bold transition-all shadow-md shadow-brand-500/20 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
                     Retry

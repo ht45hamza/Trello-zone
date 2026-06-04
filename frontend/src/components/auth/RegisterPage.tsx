@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
-import api from '../../api/axios';
+import { useRegisterMutation } from '../../api/api';
 import { Layout, Mail, Lock, User, ArrowRight, Loader2, Camera, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
 
 const RegisterPage: React.FC = () => {
@@ -13,10 +13,10 @@ const RegisterPage: React.FC = () => {
     const [address, setAddress] = useState('');
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string>('');
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [register, { isLoading }] = useRegisterMutation();
     const setAuth = useAuthStore((state) => state.setAuth);
     const navigate = useNavigate();
 
@@ -36,7 +36,6 @@ const RegisterPage: React.FC = () => {
             return;
         }
 
-        setIsLoading(true);
         setError('');
         
         try {
@@ -50,17 +49,11 @@ const RegisterPage: React.FC = () => {
                 formData.append('address', address);
             }
 
-            const response: any = await api.post('/auth/register', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const response: any = await register(formData).unwrap();
             setAuth(response.data.user, response.data.accessToken, response.data.refreshToken);
             navigate('/');
         } catch (err: any) {
-            setError(err.message || 'Registration failed');
-        } finally {
-            setIsLoading(false);
+            setError(err.data?.message || err.message || 'Registration failed');
         }
     };
 

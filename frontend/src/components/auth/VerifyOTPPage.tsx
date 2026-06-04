@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import api from '../../api/axios';
+import { useVerifyOtpMutation, useForgotPasswordMutation } from '../../api/api';
 import { ShieldCheck, Loader2, ArrowLeft } from 'lucide-react';
 
 const VerifyOTPPage: React.FC = () => {
     const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [resendCooldown, setResendCooldown] = useState(0);
 
@@ -13,6 +12,9 @@ const VerifyOTPPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const email = (location.state as any)?.email || '';
+
+    const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+    const [forgotPassword] = useForgotPasswordMutation();
 
     // Redirect if no email in state
     useEffect(() => {
@@ -69,20 +71,17 @@ const VerifyOTPPage: React.FC = () => {
             return;
         }
 
-        setIsLoading(true);
         setError('');
 
         try {
-            const response: any = await api.post('/auth/verify-otp', { email, otp: otpString });
+            const response: any = await verifyOtp({ email, otp: otpString }).unwrap();
             navigate('/reset-password', { 
                 state: { resetToken: response.data.resetToken, email: response.data.email } 
             });
         } catch (err: any) {
-            setError(err.message || 'Invalid OTP');
+            setError(err.data?.message || err.message || 'Invalid OTP');
             setOtp(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -90,13 +89,13 @@ const VerifyOTPPage: React.FC = () => {
         if (resendCooldown > 0) return;
         
         try {
-            await api.post('/auth/forgot-password', { email });
+            await forgotPassword({ email }).unwrap();
             setResendCooldown(60);
             setError('');
             setOtp(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
         } catch (err: any) {
-            setError(err.message || 'Failed to resend OTP');
+            setError(err.data?.message || err.message || 'Failed to resend OTP');
         }
     };
 

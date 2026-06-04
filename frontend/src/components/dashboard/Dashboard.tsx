@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import { 
+    useGetBoardsQuery, 
+    useCreateBoardMutation, 
+    useDeleteBoardMutation, 
+    useToggleStarBoardMutation, 
+    useUpdateAvatarMutation 
+} from '../../api/api';
 import useAuthStore from '../../store/useAuthStore';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setBoards, setLoading, setError } from '../../store/boardSlice';
@@ -34,23 +40,32 @@ const Dashboard: React.FC = () => {
     const [greeting, setGreeting] = useState('');
     
     const navigate = useNavigate();
- 
-    const fetchBoards = async () => {
-        dispatch(setLoading(true));
-        dispatch(setError(null));
-        try {
-            const response: any = await api.get('/boards');
-            dispatch(setBoards(response.data || []));
-        } catch (err: any) {
-            dispatch(setError(err.message || 'Failed to fetch boards'));
-        } finally {
-            dispatch(setLoading(false));
-        }
-    };
+
+    const { data: boardsData, isLoading: queryLoading, error: queryError, refetch: refetchBoards } = useGetBoardsQuery(undefined);
+    const [createBoard] = useCreateBoardMutation();
+    const [deleteBoard] = useDeleteBoardMutation();
+    const [toggleStarBoard] = useToggleStarBoardMutation();
+    const [updateAvatar] = useUpdateAvatarMutation();
 
     useEffect(() => {
-        fetchBoards();
-        
+        if (boardsData) {
+            dispatch(setBoards(boardsData.data || []));
+        }
+    }, [boardsData, dispatch]);
+
+    useEffect(() => {
+        if (queryError) {
+            dispatch(setError((queryError as any)?.data?.message || (queryError as any)?.message || 'Failed to fetch boards'));
+        } else {
+            dispatch(setError(null));
+        }
+    }, [queryError, dispatch]);
+
+    useEffect(() => {
+        dispatch(setLoading(queryLoading));
+    }, [queryLoading, dispatch]);
+
+    useEffect(() => {
         // Setup greeting based on time of day
         const hr = new Date().getHours();
         if (hr < 12) setGreeting('Good morning');
@@ -64,13 +79,12 @@ const Dashboard: React.FC = () => {
 
         setIsCreating(true);
         try {
-            await api.post('/boards', {
+            await createBoard({
                 title: newBoardTitle,
                 background_color: newBoardColor
-            });
+            }).unwrap();
             setNewBoardTitle('');
             setIsModalOpen(false);
-            fetchBoards();
         } catch (err) {
             console.error('Failed to create board:', err);
         } finally {
@@ -83,8 +97,7 @@ const Dashboard: React.FC = () => {
         if (!window.confirm('Are you sure you want to delete this board?')) return;
 
         try {
-            await api.delete(`/boards/${boardId}`);
-            fetchBoards();
+            await deleteBoard(boardId).unwrap();
         } catch (err) {
             console.error('Failed to delete board:', err);
         }
@@ -93,8 +106,7 @@ const Dashboard: React.FC = () => {
     const handleToggleStar = async (e: React.MouseEvent, boardId: string) => {
         e.stopPropagation();
         try {
-            await api.put(`/boards/${boardId}/star`);
-            fetchBoards();
+            await toggleStarBoard(boardId).unwrap();
         } catch (err) {
             console.error('Failed to toggle star:', err);
         }
@@ -109,9 +121,7 @@ const Dashboard: React.FC = () => {
 
         setIsUploadingAvatar(true);
         try {
-            const res: any = await api.put('/auth/profile/avatar', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const res: any = await updateAvatar(formData).unwrap();
             updateUser(res.data);
         } catch (error) {
             console.error('Failed to upload avatar', error);
@@ -248,7 +258,7 @@ const Dashboard: React.FC = () => {
                             <h3 className="text-lg font-bold text-slate-900 mb-2">Workspace Sync Failed</h3>
                             <p className="text-slate-500 mb-6 max-w-md mx-auto text-sm leading-relaxed">{error}</p>
                             <button 
-                                onClick={fetchBoards}
+                                onClick={refetchBoards}
                                 className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md shadow-slate-900/10 cursor-pointer active:scale-95"
                             >
                                 Try Again

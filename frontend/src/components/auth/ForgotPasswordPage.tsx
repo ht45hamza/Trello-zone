@@ -1,32 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../api/axios';
+import { useForgotPasswordMutation } from '../../api/api';
 import { Layout, Mail, ArrowRight, Loader2, ArrowLeft } from 'lucide-react';
 
 const ForgotPasswordPage: React.FC = () => {
     const [email, setEmail] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     
+    const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError('');
         
         try {
-            await api.post('/auth/forgot-password', { email });
+            await forgotPassword({ email }).unwrap();
             setSuccess(true);
             // Navigate to OTP verification page after 1.5 seconds
             setTimeout(() => {
                 navigate('/verify-otp', { state: { email } });
             }, 1500);
         } catch (err: any) {
-            setError(err.message || 'Failed to send OTP');
-        } finally {
-            setIsLoading(false);
+            setError(err.data?.message || err.message || 'Failed to send OTP');
         }
     };
 

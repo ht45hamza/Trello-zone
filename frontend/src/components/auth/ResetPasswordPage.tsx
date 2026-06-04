@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import api from '../../api/axios';
+import { useResetPasswordMutation } from '../../api/api';
 import { Lock, KeyRound, ArrowRight, Loader2, ArrowLeft, CheckCircle, Eye, EyeOff } from 'lucide-react';
 
 const ResetPasswordPage: React.FC = () => {
@@ -8,7 +8,6 @@ const ResetPasswordPage: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
@@ -16,6 +15,8 @@ const ResetPasswordPage: React.FC = () => {
     const location = useLocation();
     const resetToken = (location.state as any)?.resetToken || '';
     const email = (location.state as any)?.email || '';
+
+    const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
     // Redirect if no reset token in state
     useEffect(() => {
@@ -38,18 +39,14 @@ const ResetPasswordPage: React.FC = () => {
             return;
         }
 
-        setIsLoading(true);
-
         try {
-            await api.post('/auth/reset-password', { resetToken, newPassword });
+            await resetPassword({ resetToken, newPassword }).unwrap();
             setSuccess(true);
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
         } catch (err: any) {
-            setError(err.message || 'Failed to reset password');
-        } finally {
-            setIsLoading(false);
+            setError(err.data?.message || err.message || 'Failed to reset password');
         }
     };
 

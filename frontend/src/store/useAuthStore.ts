@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import api from '../api/axios';
+import { api } from '../api/api';
+import { store } from './index';
 
 interface AuthState {
     user: any | null;
@@ -35,9 +36,9 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
     logout: async () => {
         try {
-            await api.post('/auth/logout');
+            await store.dispatch(api.endpoints.logout.initiate(undefined)).unwrap();
         } catch (err) {
-            // Silently fail — we're logging out anyway
+
         }
         localStorage.removeItem('accessToken');
         localStorage.removeItem('token');
@@ -58,7 +59,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
         try {
             set({ loading: true });
-            const response: any = await api.get('/auth/profile');
+            const response: any = await store.dispatch(api.endpoints.getUserProfile.initiate(undefined)).unwrap();
             set({ user: response.data, isAuthenticated: true, error: null });
         } catch (error: any) {
             console.error("Failed to fetch profile", error);

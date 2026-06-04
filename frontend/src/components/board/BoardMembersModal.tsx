@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../common/Modal';
-import api from '../../api/axios';
+import { 
+    useLazySearchUsersQuery, 
+    useAddBoardMemberMutation, 
+    useRemoveBoardMemberMutation 
+} from '../../api/api';
 import useAuthStore from '../../store/useAuthStore';
 import { 
     Search, 
@@ -30,9 +34,13 @@ const BoardMembersModal: React.FC<BoardMembersModalProps> = ({
     // Search states
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [isSearching, setIsSearching] = useState(false);
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
     
+    // RTK Query hooks
+    const [triggerSearch, { isFetching: isSearching }] = useLazySearchUsersQuery();
+    const [addBoardMember] = useAddBoardMemberMutation();
+    const [removeBoardMember] = useRemoveBoardMemberMutation();
+
     // Action loading states
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -46,20 +54,17 @@ const BoardMembersModal: React.FC<BoardMembersModalProps> = ({
         }
 
         const delayDebounce = setTimeout(async () => {
-            setIsSearching(true);
             setError(null);
             try {
-                const response: any = await api.get(`/auth/search?email=${encodeURIComponent(searchQuery)}`);
+                const response: any = await triggerSearch(searchQuery).unwrap();
                 setSearchResults(response.data || []);
             } catch (err: any) {
                 console.error("Search failed:", err);
-            } finally {
-                setIsSearching(false);
             }
         }, 400); // 400ms debounce
 
         return () => clearTimeout(delayDebounce);
-    }, [searchQuery]);
+    }, [searchQuery, triggerSearch]);
 
     if (!board) return null;
 
@@ -74,13 +79,13 @@ const BoardMembersModal: React.FC<BoardMembersModalProps> = ({
         setSuccessMessage(null);
         
         try {
-            const res: any = await api.post(`/boards/${board._id}/members`, { email: selectedUser.email });
+            const res: any = await addBoardMember({ id: board._id, email: selectedUser.email }).unwrap();
             onBoardUpdated(res.data);
             setSuccessMessage(`Successfully added ${selectedUser.full_name} to the board!`);
             setSelectedUser(null);
             setSearchQuery('');
         } catch (err: any) {
-            setError(err.message || 'Failed to add member');
+            setError(err.data?.message || err.message || 'Failed to add member');
         } finally {
             setIsSubmitting(false);
         }
@@ -98,7 +103,7 @@ const BoardMembersModal: React.FC<BoardMembersModalProps> = ({
         setSuccessMessage(null);
 
         try {
-            const res: any = await api.delete(`/boards/${board._id}/members/${memberId}`);
+            const res: any = await removeBoardMember({ id: board._id, memberId }).unwrap();
             onBoardUpdated(res.data);
             setSuccessMessage(isSelf ? 'You left the board.' : `Removed ${name} from the board.`);
             if (isSelf) {
@@ -106,7 +111,7 @@ const BoardMembersModal: React.FC<BoardMembersModalProps> = ({
                 window.location.href = '/';
             }
         } catch (err: any) {
-            setError(err.message || 'Failed to remove member');
+            setError(err.data?.message || err.message || 'Failed to remove member');
         }
     };
 

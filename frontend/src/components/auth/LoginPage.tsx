@@ -1,32 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
-import api from '../../api/axios';
+import { useLoginMutation } from '../../api/api';
 import { Layout, Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     
+    const [login, { isLoading }] = useLoginMutation();
     const setAuth = useAuthStore((state) => state.setAuth);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError('');
         
         try {
-            const response: any = await api.post('/auth/login', { email, password });
+            const response: any = await login({ email, password }).unwrap();
             setAuth(response.data.user, response.data.accessToken, response.data.refreshToken);
             navigate('/');
         } catch (err: any) {
-            setError(err.message || 'Login failed');
-        } finally {
-            setIsLoading(false);
+            setError(err.data?.message || err.message || 'Login failed');
         }
     };
 
