@@ -431,7 +431,7 @@ const BoardView: React.FC = () => {
             />
 
             {/* Kanban Workspace */}
-            <main className="flex-1 overflow-x-auto overflow-y-hidden p-6 scrollbar-thin dark-scrollbar">
+            <main className="flex-1 overflow-x-auto overflow-y-hidden p-3 sm:p-6 snap-x snap-mandatory sm:snap-none scroll-smooth scrollbar-thin dark-scrollbar">
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId="board" type="list" direction="horizontal">
                         {(provided) => (
@@ -473,7 +473,7 @@ const BoardView: React.FC = () => {
 
                                 {/* Add New Column Section */}
                                 {isAddingList ? (
-                                    <div className="w-76 shrink-0 bg-white/75 backdrop-blur-lg border border-white/45 rounded-2xl p-3 h-fit shadow-lg animate-in zoom-in-95 duration-150">
+                                    <div className="w-[280px] xs:w-76 shrink-0 bg-white/75 backdrop-blur-lg border border-white/45 rounded-2xl p-3 h-fit shadow-lg animate-in zoom-in-95 duration-150 snap-center sm:snap-align-none">
                                         <input
                                             autoFocus
                                             type="text"
@@ -501,7 +501,7 @@ const BoardView: React.FC = () => {
                                 ) : (
                                     <button 
                                         onClick={() => setIsAddingList(true)}
-                                        className="w-76 shrink-0 bg-white/20 hover:bg-white/30 border border-white/10 backdrop-blur-md text-white rounded-2xl p-4 flex items-center gap-2.5 font-bold transition-all h-fit cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+                                        className="w-[280px] xs:w-76 shrink-0 bg-white/20 hover:bg-white/30 border border-white/10 backdrop-blur-md text-white rounded-2xl p-4 flex items-center gap-2.5 font-bold transition-all h-fit cursor-pointer hover:scale-[1.01] active:scale-[0.99] snap-center sm:snap-align-none"
                                     >
                                         <Plus size={20} /> Add another list
                                     </button>

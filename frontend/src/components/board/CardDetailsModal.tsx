@@ -83,7 +83,7 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             title={card.title || 'Card Details'}
             maxWidth="max-w-4xl"
         >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-slate-800 max-h-[75vh] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-slate-800">
                 
                 {/* Left column (2/3 width) - Title, Description, Checklist */}
                 <div className="md:col-span-2 space-y-6">
