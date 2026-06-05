@@ -47,7 +47,12 @@ const BoardCardItem: React.FC<BoardCardItemProps> = ({
                     )}
                     
                     <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-semibold text-slate-800 leading-snug flex-1">{card.title}</p>
+                        <p className={`text-sm font-semibold leading-snug flex-1 ${allDone ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{card.title}</p>
+                        {allDone && (
+                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full text-emerald-700 bg-emerald-50 border border-emerald-100 shrink-0">
+                                Done
+                            </span>
+                        )}
                     </div>
                     
                     {/* Card Metadata indicators */}

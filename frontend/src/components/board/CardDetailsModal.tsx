@@ -76,6 +76,10 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 }) => {
     if (!card) return null;
 
+    const completedActivities = card.activities?.filter((a: any) => a.is_completed).length || 0;
+    const totalActivities = card.activities?.length || 0;
+    const allDone = totalActivities > 0 && completedActivities === totalActivities;
+
     return (
         <Modal
             isOpen={isOpen}
@@ -83,7 +87,7 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             title={card.title || 'Card Details'}
             maxWidth="max-w-4xl"
         >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-slate-800">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-slate-800 max-h-[75vh] overflow-y-auto pr-1">
                 
                 {/* Left column (2/3 width) - Title, Description, Checklist */}
                 <div className="md:col-span-2 space-y-6">
@@ -99,7 +103,7 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                                     onChange={(e) => setEditingCardTitle(e.target.value)}
                                     className="w-full px-3.5 py-1.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-semibold text-slate-800"
                                     autoFocus
-                                />
+                                  />
                                 <button 
                                     onClick={() => {
                                         if (editingCardTitle.trim()) {
@@ -119,15 +123,22 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                                 </button>
                             </div>
                         ) : (
-                            <h2 
-                                onClick={() => {
-                                    setEditingCardTitle(card.title);
-                                    setIsEditingCardTitle(true);
-                                }}
-                                className="text-lg font-extrabold text-slate-800 hover:bg-slate-100/80 px-2 py-1 -ml-2 rounded-xl cursor-pointer transition-colors inline-block"
-                            >
-                                {card.title}
-                            </h2>
+                            <div className="flex items-center gap-2">
+                                <h2 
+                                    onClick={() => {
+                                        setEditingCardTitle(card.title);
+                                        setIsEditingCardTitle(true);
+                                    }}
+                                    className={`text-lg font-extrabold hover:bg-slate-100/80 px-2 py-1 -ml-2 rounded-xl cursor-pointer transition-colors inline-block ${allDone ? 'text-slate-400 line-through' : 'text-slate-800'}`}
+                                >
+                                    {card.title}
+                                </h2>
+                                {allDone && (
+                                    <span className="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1 shadow-sm">
+                                        ✓ Completed
+                                    </span>
+                                )}
+                            </div>
                         )}
                         <span className="text-xs text-slate-400 mt-1 block">
                             in list <span className="font-bold text-slate-600 underline">{lists.find(l => l._id === card.list_id)?.title || 'list'}</span>
