@@ -236,7 +236,7 @@ const BoardMembersModal: React.FC<BoardMembersModalProps> = ({
 
                 {/* Members list */}
                 <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Participants ({board.members?.length + 1})</h4>
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Participants ({board.members?.length || 0})</h4>
                     <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                         {/* Owner item */}
                         <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/40 rounded-xl">

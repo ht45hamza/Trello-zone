@@ -84,7 +84,7 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({
                     onClick={onMembersOpen}
                     className="bg-white/10 border border-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all cursor-pointer flex items-center gap-1.5"
                 >
-                    👥 Members ({board ? (board.members?.length || 0) + 1 : 1})
+                    👥 Members ({board ? board.members?.length || 0 : 0})
                 </button>
                 <button 
                     onClick={onShare}
